@@ -1,0 +1,733 @@
+{
+  "name": "Data Scarper Sameer",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        128
+      ],
+      "id": "add98550-04d0-4576-9e4d-674d2b9fc249",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -304,
+        -96
+      ],
+      "id": "6961ec64-08ef-4c5d-9010-0a95983ca09d",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "eCHftLk0l7avsYiu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "take these fields as input and generate upto 5 fake leads. Include information related to all the fields. and input all required fields.\n\nGuidelines:\n1)Respond in JSON using this format:\n\n{\"Company Name\":\"\", \"Industry\":\"\", \"Company Size\":\"\", \"Location\":\"\",\"Website\":\"\",\"LinkedIn Company Page\":\"\",\"Decision Maker Name\":\"\",\"Designation\":\"\",\"Email\":\"\",\"Phone\":\"\",\"Lead Source\":\"\",\"Notes\":\"\"}\n\n\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        544,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "ef08714e-9a55-4bb5-ab73-bd37b1005a98",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Company Name:  {{ $json['Company Name'] }}\nIndustry: {{ $json.Industry }}\nCompany Size: {{ $json['Company Size'] }}\nLocation: {{ $json.Location }}\nWebsite: {{ $json.Website }}\nLinkedIn: {{ $json['LinkedIn Company Page'] }}\nDecision Maker Name: {{ $json['Decision Maker Name'] }}\nDesignation: {{ $json.Designation }}\nDecision Maker LinkedIn: {{ $json['Decision Maker LinkedIn'] }}\nEmail: {{ $json.Email }}\nPhone: {{ $json.Phone }}\nLead Source: {{ $json['Lead Source'] }}\nNotes: {{ $json.Notes }}\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        800,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "7279522f-f7e5-40d6-b7ad-449e042b3e06",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a data generator.\nReturn ONLY valid JSON.\nDo not include explanations.\nDo not include markdown.\n",
+              "role": "model"
+            },
+            {
+              "content": "=Generate fake but realistic data for the following fields.\n\nFields:\n{{ JSON.stringify($json.columns) }}\n\nRules:\n- Output must be a JSON ARRAY\n- Each object must use EXACT field names\n- One object = one row\n- Generate 5 rows\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        80
+      ],
+      "id": "a8e7ad84-1d14-49fd-82ea-89df33647f57",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "4PLANFR6zGooyNdP",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $json.row_number }}",
+            "Company Name": "={{ $json[\"Company Name\"] }}",
+            "Industry": "={{ $json.Industry }}",
+            "Company Size": "={{ $json[\"Company Size\"] }}",
+            "Location": "={{ $json.Location }}",
+            "Website": "={{ $json.Website }}",
+            "LinkedIn Company Page": "={{ $json[\"LinkedIn Company Page\"] }}",
+            "Decision Maker Name": "={{ $json[\"Decision Maker Name\"] }}",
+            "Designation": "={{ $json.Designation }}",
+            "Decision Maker LinkedIn": "={{ $json[\"Decision Maker LinkedIn\"] }}",
+            "Email": "={{ $json.Email }}",
+            "Phone": "={{ $json.Phone }}",
+            "Lead Source": "={{ $json[\"Lead Source\"] }}",
+            "Notes": "={{ $json.Notes }}",
+            "Subject": "={{ $json.Subject }}",
+            "iceBreaker": "={{ $json.iceBreaker }}",
+            "elevatorPitch": "={{ $json.elevatorPitch }}",
+            "callToAction": "={{ $json.callToAction }}",
+            "postScript": "={{ $json.postScript }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Size",
+              "displayName": "Company Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn Company Page",
+              "displayName": "LinkedIn Company Page",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker Name",
+              "displayName": "Decision Maker Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Designation",
+              "displayName": "Designation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker LinkedIn",
+              "displayName": "Decision Maker LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead Source",
+              "displayName": "Lead Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "iceBreaker",
+              "displayName": "iceBreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "elevatorPitch",
+              "displayName": "elevatorPitch",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "callToAction",
+              "displayName": "callToAction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "postScript",
+              "displayName": "postScript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        -128
+      ],
+      "id": "89ce604c-07fb-4d06-bd84-fedf7d30d3b2",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "eCHftLk0l7avsYiu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b7294a1d-0bc7-400c-bafe-815f8a51888a",
+              "name": "columns",
+              "value": "=={{ Object.keys($json) }}",
+              "type": "string"
+            },
+            {
+              "id": "4c514e36-76b0-4e60-baab-88f66c97fc20",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -352,
+        240
+      ],
+      "id": "1b5bc887-4546-42c9-8061-6fe6e15fcc48",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = items[0].json.content.parts[0].text;\nconst parsed = JSON.parse(raw);\n\nreturn parsed.map(row => ({ json: row }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        368
+      ],
+      "id": "d5166d02-449c-4a27-9624-706aa42fcea7",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company Name": "={{ $json[\"Company Name\"] }}",
+            "Industry": "={{ $json.Industry }}",
+            "Company Size": "={{ $json[\"Company Size\"] }}",
+            "Location": "={{ $json.Location }}",
+            "Website": "={{ $json.Website }}",
+            "LinkedIn Company Page": "={{ $json[\"LinkedIn Company Page\"] }}",
+            "Decision Maker Name": "={{ $json[\"Decision Maker Name\"] }}",
+            "Designation": "={{ $json.Designation }}",
+            "Decision Maker LinkedIn": "={{ $json[\"Decision Maker LinkedIn\"] }}",
+            "Email": "={{ $json.Email }}",
+            "Phone": "={{ $json.Phone }}",
+            "Lead Source": "={{ $json[\"Lead Source\"] }}",
+            "Notes": "={{ $json.Notes }}",
+            "Subject": "={{ $json.Subject }}",
+            "iceBreaker": "={{ $json.iceBreaker }}",
+            "elevatorPitch": "={{ $json.elevatorPitch }}",
+            "callToAction": "={{ $json.callToAction }}",
+            "postScript": "={{ $json.postScript }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Size",
+              "displayName": "Company Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn Company Page",
+              "displayName": "LinkedIn Company Page",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker Name",
+              "displayName": "Decision Maker Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Designation",
+              "displayName": "Designation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker LinkedIn",
+              "displayName": "Decision Maker LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead Source",
+              "displayName": "Lead Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "iceBreaker",
+              "displayName": "iceBreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "elevatorPitch",
+              "displayName": "elevatorPitch",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "callToAction",
+              "displayName": "callToAction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "postScript",
+              "displayName": "postScript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        144
+      ],
+      "id": "402859e0-4d60-4d3f-abdb-dd3b316a5867",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "eCHftLk0l7avsYiu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DG1_LcA9vcGpcI6N6mZ-jv2T0DMMwu2afnxoXgP-tJ4/edit#gid=0"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        144
+      ],
+      "id": "2e414233-8820-48a9-980e-e40f20d33222",
+      "name": "Delete rows or columns from sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "eCHftLk0l7avsYiu",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Delete rows or columns from sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "efe89d99-fd3c-4d23-b704-43b6cd65b542",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4d169e99a0fdc85b54c8983ab16f1025e4b0f36122188c59947c877320a26e7a"
+  },
+  "id": "zIWwYax6DvTRxIVhUfGyb",
+  "tags": []
+}
