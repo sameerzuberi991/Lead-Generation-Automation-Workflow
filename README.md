@@ -3,6 +3,7 @@ This repository contains an n8n automation workflow that generates fake but real
 It is useful for testing CRM pipelines, demos, cold-email systems, or sales automation workflows without using real data.
 
 🧠 Key Features
+
 🤖 AI-generated realistic lead data
 
 📊 Dynamic column detection (no hardcoding)
@@ -14,7 +15,9 @@ It is useful for testing CRM pipelines, demos, cold-email systems, or sales auto
 🧪 Perfect for testing sales / outreach systems
 
 
+
 🔧 Tech Stack
+
 n8n (Workflow Automation)
 
 Google Sheets API
@@ -27,6 +30,7 @@ JavaScript (Code Node)
 ⚙️ Setup Instructions
 
 Prerequisites:
+
 n8n instance (cloud or self-hosted)
 
 Google Sheets account
@@ -35,6 +39,7 @@ Google Gemini (PaLM) API key
 
 
 Steps:
+
 Import the workflow JSON into n8n
 
 Connect:
